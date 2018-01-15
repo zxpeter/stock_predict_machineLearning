@@ -1,0 +1,77 @@
+import pandas as pd
+import pyodbc
+import matplotlib.pyplot as plt
+from matplotlib import style
+import numpy as np
+style.use('ggplot')
+
+server = 'LENOVO-PC\SQL2016'
+db = 'PyConnTest'
+
+# Create the connection
+conn = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';Trusted_Connection=yes')
+
+# query db
+sql =  """ SELECT * FROM HousePrice """
+
+df = pd.io.sql.read_sql(sql, conn)
+# print(df)
+
+
+df = df.set_index('Date')
+df = df.astype(float)
+df.index = pd.to_datetime(df.index)
+
+# df2 = df.resample('A').mean()
+df['year'] = df.resample('A').mean()
+df2 = df.pct_change()
+df_corrlation = df.corr()
+print(df_corrlation)
+print(df_corrlation.describe())
+
+df['rollingstd'] = pd.rolling_std(df['Value'], 3)
+print(df)
+
+
+fig = plt.figure()
+ax1 = plt.subplot2grid((2,1), (0,0))
+ax2 = plt.subplot2grid((2,1), (1,0),  sharex = ax1)
+print(df)
+print(df2)
+# df.dropna(inplace=True)
+# df.fillna(method = 'ffill', inplace=True)
+df[['Value', 'year']].plot(ax = ax1)
+df['rollingstd'].plot(ax = ax2)
+df2.plot()
+
+# df.plot(ax = ax1, label = 'monthly')
+# df2.plot(ax = ax1, label = 'year')
+plt.show()
+
+
+
+
+
+data = df_corrlation.values
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+
+heatmap = ax.pcolor(data, cmap=plt.cm.RdYlGn)
+fig.colorbar(heatmap)
+ax.set_xticks(np.arange(data.shape[0]) + 0.5, minor=False)
+ax.set_yticks(np.arange(data.shape[1]) + 0.5, minor=False)
+
+ax.invert_yaxis()
+ax.xaxis.tick_top()
+
+column_labels = df_corrlation.columns
+row_labels = df_corrlation.index
+
+ax.set_xticklabels(column_labels)
+ax.set_yticklabels(row_labels)
+
+plt.xticks(rotation=90)
+heatmap.set_clim(-1, 1)
+
+plt.tight_layout()
+plt.show()
