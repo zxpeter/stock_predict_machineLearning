@@ -11,6 +11,9 @@ db = 'PyConnTest'
 # Create the connection
 conn = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';Trusted_Connection=yes')
 
+#conn_info = 'DRIVER={SQL Server};DATABASE=%s;SERVER=%s;UID=%s;PWD=%s'%(database, host, user, pwd)
+
+
 # query db
 sql =  """ SELECT * FROM HousePrice """
 
