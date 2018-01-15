@@ -1,0 +1,45 @@
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib import style
+style.use('ggplot')
+
+df1 = pd.DataFrame({'column1' : [2001, 2002, 2003, 2004], 
+                                   'column2' : [22,33,44,55],
+                                   'column3' : [10,11,12,13]})
+
+df2 = pd.DataFrame({'column1' : [2005, 2006, 2007, 2008],
+                                   'column2' : [22,33,44,55],
+                                   'column3' : [10,11,12,13]})
+
+df3 = pd.DataFrame({'column1' : [2001, 2002, 2003, 2004],
+                                   'column2' : [22,33,44,55],
+                                   'column3' : [110,114,116,118],
+                                   'column4' : [10,14,16,18]})
+
+df4 = pd.DataFrame({'column1' : [2001, 2002, 2003],
+                                   'column2' : [22,33,45],
+                                   'column3' : [10,14,16]})
+# print(df4)
+
+concat = pd.concat([df1,df3])
+# print(concat)
+
+df5 = df1.append(df3)
+# print(df5)
+
+# df1.set_index('column1', inplace=True)
+# df3.set_index('column1', inplace=True)
+joined = df2.join(df4, how='outer', lsuffix='_left')
+# print(joined)
+
+merged = pd.merge(df1,df3, how='left')
+# merged.set_index('column1', inplace=True)
+# print(merged)
+# df1.describe()
+df4.set_index('column1', inplace=True)
+df4.corr()
+# plt.legend().remove()
+df4.plot() 
+plt.show()
